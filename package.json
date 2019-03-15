@@ -28,7 +28,7 @@
   "homepage": "https://github.com/xcjs/node-ads1x15-decaffeinated",
   "dependencies": {
     "async": "^0.9.0",
-    "i2c-decaffeinated": "^0.2.1"
+    "i2c-decaffeinated": "https://github.com/oratekch/node-i2c-decaffeinated"
   },
   "devDependencies": {
     "chai": "^2.2.0",
