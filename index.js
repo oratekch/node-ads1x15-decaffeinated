@@ -1,6 +1,6 @@
 
 // javascript/node  rewrite of the Adafruit ads1x15 python library...
-var i2c = require('i2c'); 
+var i2c = require('i2c-decaffeinated'); 
 var async = require('async');
 
 // chip
@@ -70,7 +70,7 @@ ADS1015_REG_CONFIG_CQUE_2CONV = 0x0001 // Assert ALERT/RDY after two conversions
 ADS1015_REG_CONFIG_CQUE_4CONV = 0x0002 // Assert ALERT/RDY after four conversions
 ADS1015_REG_CONFIG_CQUE_NONE = 0x0003 // Disable the comparator and put ALERT/RDY in high state (default)
 
-// This is a javascript port of python, so use objects instead of dictionaries here 
+// This is a javascript port of python, so use objects instead of dictionaries here
 // These simplify and clean the code (avoid the abuse of if/elif/else clauses)
 var spsADS1115 = {
   8   : ADS1115_REG_CONFIG_DR_8SPS,
@@ -127,7 +127,7 @@ function ads1x15(ic, address, i2c_dev) {
   this.ic = ic; // 0 for ads1015, 1 for ads1115;
   this.address = address; //defaults to 0x48 for addr pin tied to ground
   this.pga = 6144; //set this to a sane default...
-  this.wire = new i2c(address, { device : i2c_dev } );   
+  this.wire = new i2c(address, { device : i2c_dev } );
   this.busy = false;
 
 }
@@ -162,7 +162,7 @@ ads1x15.prototype.readADCSingleEnded = function(channel, pga, sps, callback) {
   // Disable comparator, Non-latching, Alert/Rdy active low
   // traditional comparator, single-shot mode
     var config =  ADS1015_REG_CONFIG_CQUE_NONE | ADS1015_REG_CONFIG_CLAT_NONLAT | ADS1015_REG_CONFIG_CPOL_ACTVLOW | ADS1015_REG_CONFIG_CMODE_TRAD | ADS1015_REG_CONFIG_MODE_SINGLE;
-   
+
 
   // Set sample per seconds, defaults to 250sps
   // If sps is in the dictionary (defined in init) it returns the value of the constant
@@ -249,7 +249,7 @@ ads1x15.prototype.readADCSingleEnded = function(channel, pga, sps, callback) {
           {
             // Shift right 4 bits for the 12-bit ADS1015 and convert to mV
             // console.log('res0 = ' + res[0] + ', res1: ' + res[1]);
-        
+
             var data = ( ((res[0] << 8) | (res[1] & 0xFF)) >> 4 ) * self.pga / 2048.0;
             self.busy = false;
             callback(null, data);
@@ -273,7 +273,7 @@ ads1x15.prototype.readADCSingleEnded = function(channel, pga, sps, callback) {
         }
       });
       }, delay);
-  
+
     });
   }
   else
@@ -308,8 +308,8 @@ ads1x15.prototype.readADCDifferential = function(chP, chN, pga, sps, callback) {
 
     // Disable comparator, Non-latching, Alert/Rdy active low
     // traditional comparator, single-shot mode
-    config = ADS1015_REG_CONFIG_CQUE_NONE | ADS1015_REG_CONFIG_CLAT_NONLAT | 
-    ADS1015_REG_CONFIG_CPOL_ACTVLOW | ADS1015_REG_CONFIG_CMODE_TRAD | 
+    config = ADS1015_REG_CONFIG_CQUE_NONE | ADS1015_REG_CONFIG_CLAT_NONLAT |
+    ADS1015_REG_CONFIG_CPOL_ACTVLOW | ADS1015_REG_CONFIG_CMODE_TRAD |
     ADS1015_REG_CONFIG_MODE_SINGLE;
 
     // Set channels
@@ -386,7 +386,7 @@ ads1x15.prototype.readADCDifferential = function(chP, chN, pga, sps, callback) {
     setTimeout(function() {
       self.wire.readBytes(ADS1015_REG_POINTER_CONVERT, 2, function(err, res) {
         if (self.ic == IC_ADS1015)
-        {        
+        {
           // Shift right 4 bits for the 12-bit ADS1015 and convert to mV
           var data = ( ((res[0] << 8) | (res[1] & 0xFF)) >> 4 ) * pga / 2048.0;
           self.busy = false;
@@ -420,9 +420,9 @@ ads1x15.prototype.readADCDifferential = function(chP, chN, pga, sps, callback) {
 
 
 // Gets a differential ADC reading from channels 0 and 1 in mV
-// The sample rate for this mode (single-shot) can be used to lower the noise 
-// (low sps) or to lower the power consumption (high sps) by duty cycling, 
-// see data sheet page 14 for more info. 
+// The sample rate for this mode (single-shot) can be used to lower the noise
+// (low sps) or to lower the power consumption (high sps) by duty cycling,
+// see data sheet page 14 for more info.
 // The pga must be given in mV, see page 13 for the supported values.
 
 ads1x15.prototype.readADCDifferential01 = function(pga, sps, callback) {
@@ -435,10 +435,10 @@ ads1x15.prototype.readADCDifferential01 = function(pga, sps, callback) {
 }
 
 
-// Gets a differential ADC reading from channels 0 and 3 in mV 
-// The sample rate for this mode (single-shot) can be used to lower the noise 
-// (low sps) or to lower the power consumption (high sps) by duty cycling, 
-// see data sheet page 14 for more info. 
+// Gets a differential ADC reading from channels 0 and 3 in mV
+// The sample rate for this mode (single-shot) can be used to lower the noise
+// (low sps) or to lower the power consumption (high sps) by duty cycling,
+// see data sheet page 14 for more info.
 // The pga must be given in mV, see page 13 for the supported values.
 
 ads1x15.prototype.readADCDifferential03 = function (pga, sps, callback) {
@@ -450,10 +450,10 @@ ads1x15.prototype.readADCDifferential03 = function (pga, sps, callback) {
 }
 
 
-// Gets a differential ADC reading from channels 1 and 3 in mV 
-// The sample rate for this mode (single-shot) can be used to lower the noise 
-// (low sps) or to lower the power consumption (high sps) by duty cycling, 
-// see data sheet page 14 for more info. 
+// Gets a differential ADC reading from channels 1 and 3 in mV
+// The sample rate for this mode (single-shot) can be used to lower the noise
+// (low sps) or to lower the power consumption (high sps) by duty cycling,
+// see data sheet page 14 for more info.
 // The pga must be given in mV, see page 13 for the supported values.
 
 ads1x15.prototype.readADCDifferential13 = function(pga, sps, callback) {
@@ -466,13 +466,13 @@ ads1x15.prototype.readADCDifferential13 = function(pga, sps, callback) {
 }
 
 
-// Gets a differential ADC reading from channels 2 and 3 in mV 
-// The sample rate for this mode (single-shot) can be used to lower the noise 
+// Gets a differential ADC reading from channels 2 and 3 in mV
+// The sample rate for this mode (single-shot) can be used to lower the noise
 // (low sps) or to lower the power consumption (high sps) by duty cycling,
-// see data sheet page 14 for more info. 
+// see data sheet page 14 for more info.
 // The pga must be given in mV, see page 13 for the supported values.
 
-ads1x15.prototype.readADCDifferential23 = function(pga, sps, callback) { 
+ads1x15.prototype.readADCDifferential23 = function(pga, sps, callback) {
   if(!pga)
     pga = 6144;
   if(!sps)
@@ -482,11 +482,11 @@ ads1x15.prototype.readADCDifferential23 = function(pga, sps, callback) {
 }
 
 
-// Starts the continuous conversion mode and returns the first ADC reading 
-// in mV from the specified channel. 
-// The sps controls the sample rate. 
-// The pga must be given in mV, see datasheet page 13 for the supported values. 
-// Use getLastConversionResults() to read the next values and 
+// Starts the continuous conversion mode and returns the first ADC reading
+// in mV from the specified channel.
+// The sps controls the sample rate.
+// The pga must be given in mV, see datasheet page 13 for the supported values.
+// Use getLastConversionResults() to read the next values and
 // stopContinuousConversion() to stop converting.
 
 ads1x15.prototype.startContinuousConversion = function(channel, pga, sps, callback) {
@@ -512,8 +512,8 @@ ads1x15.prototype.startContinuousConversion = function(channel, pga, sps, callba
     // traditional comparator, continuous mode
     // The last flag is the only change we need, page 11 datasheet
 
-    config = ADS1015_REG_CONFIG_CQUE_NONE | ADS1015_REG_CONFIG_CLAT_NONLAT | 
-      ADS1015_REG_CONFIG_CPOL_ACTVLOW | ADS1015_REG_CONFIG_CMODE_TRAD | 
+    config = ADS1015_REG_CONFIG_CQUE_NONE | ADS1015_REG_CONFIG_CLAT_NONLAT |
+      ADS1015_REG_CONFIG_CPOL_ACTVLOW | ADS1015_REG_CONFIG_CMODE_TRAD |
       ADS1015_REG_CONFIG_MODE_CONTIN;
 
     // Set sample per seconds, defaults to 250sps
@@ -672,17 +672,17 @@ ads1x15.prototype.getLastConversionResults = function(callback) {
 }
 
 
-// Starts the comparator mode on the specified channel, see datasheet pg. 15. 
-// In traditional mode it alerts (ALERT pin will go low) when voltage exceeds 
-// thresholdHigh until it falls below thresholdLow (both given in mV). 
+// Starts the comparator mode on the specified channel, see datasheet pg. 15.
+// In traditional mode it alerts (ALERT pin will go low) when voltage exceeds
+// thresholdHigh until it falls below thresholdLow (both given in mV).
 // In window mode (traditionalMode=False) it alerts when voltage doesn't lie
 // between both thresholds.
-// In latching mode the alert will continue until the conversion value is read. 
+// In latching mode the alert will continue until the conversion value is read.
 // numReadings controls how many readings are necessary to trigger an alert: 1, 2 or 4.
-// Use getLastConversionResults() to read the current value (which may differ 
-// from the one that triggered the alert) and clear the alert pin in latching mode. 
-// This function starts the continuous conversion mode. The sps controls 
-// the sample rate and the pga the gain, see datasheet page 13. 
+// Use getLastConversionResults() to read the current value (which may differ
+// from the one that triggered the alert) and clear the alert pin in latching mode.
+// This function starts the continuous conversion mode. The sps controls
+// the sample rate and the pga the gain, see datasheet page 13.
 
 ads1x15.prototype.startSingleEndedComparator = function(channel, thresholdHigh, thresholdLow, pga, sps, activeLow, traditionalMode, latching, numReadings, callback) {
   self = this;
@@ -833,7 +833,7 @@ ads1x15.prototype.startSingleEndedComparator = function(channel, thresholdHigh, 
     }
     var bytes = [(thresholdLowWORD >> 8) & 0xFF, thresholdLowWORD & 0xFF];
 
-    this.wire.writeBytes(ADS1015_REG_POINTER_LOWTHRESH, bytes, function(err) { 
+    this.wire.writeBytes(ADS1015_REG_POINTER_LOWTHRESH, bytes, function(err) {
       if(err){
         self.busy = false;
         callback(err);
@@ -845,7 +845,7 @@ ads1x15.prototype.startSingleEndedComparator = function(channel, thresholdHigh, 
     // we can read the converted values using getLastConversionResult
     bytes = [(config >> 8) & 0xFF, config & 0xFF];
 
-    this.wire.writeBytes(ADS1015_REG_POINTER_CONFIG, bytes, function(err) { 
+    this.wire.writeBytes(ADS1015_REG_POINTER_CONFIG, bytes, function(err) {
       if(err){
         self.busy = false;
         callback(err);
@@ -914,7 +914,7 @@ ads1x15.prototype.startDifferentialComparator = function(chP, chN, thresholdHigh
     {
       config |= ADS1015_REG_CONFIG_CLAT_NONLAT;
     }
-    if (numReadings==4) 
+    if (numReadings==4)
     {
       config |= ADS1015_REG_CONFIG_CQUE_4CONV;
     }
@@ -990,14 +990,14 @@ ads1x15.prototype.startDifferentialComparator = function(chP, chN, thresholdHigh
     if (this.ic == IC_ADS1015)
     {
       thresholdHighWORD = int(thresholdHigh*(2048.0/pga));
-    } 
+    }
     else
     {
       thresholdHighWORD = int(thresholdHigh*(32767.0/pga));
     }
     var bytes = [(thresholdHighWORD >> 8) & 0xFF, thresholdHighWORD & 0xFF];
 
-    this.wire.writeBytes(ADS1015_REG_POINTER_HITHRESH, bytes, function(err) { 
+    this.wire.writeBytes(ADS1015_REG_POINTER_HITHRESH, bytes, function(err) {
       callback(err);
     });
 
@@ -1012,7 +1012,7 @@ ads1x15.prototype.startDifferentialComparator = function(chP, chN, thresholdHigh
     }
     bytes = [(thresholdLowWORD >> 8) & 0xFF, thresholdLowWORD & 0xFF];
 
-    this.wire.writeBytes(ADS1015_REG_POINTER_LOWTHRESH, bytes, function(err) { 
+    this.wire.writeBytes(ADS1015_REG_POINTER_LOWTHRESH, bytes, function(err) {
       if(err)
       {
         self.busy = false;
